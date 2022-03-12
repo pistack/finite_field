@@ -27,24 +27,24 @@ mon pow(mon base, unsigned long long int idx)
 }
 
 template<int p>
-void sqrt<p>::gen_non_res()
+void tonelli_shanks<p>::gen_non_res()
 {
     int tmp;
     do
-    {tmp = dist(gen); non_residual = tmp;} 
+    {tmp = dist(rng); non_residual = tmp;} 
     while (pow(non_residual, (p-1)>>1) == 1);
     return;
 }
 
 template<int p>
-finite_field<p> sqrt<p>::operator()(const finite_field<p> x)
+finite_field<p> tonelli_shanks<p>::operator()(finite_field<p> x)
 {
     int q = p-1, m = 0, i;
     finite_field<p> b, c, t, r;
     if(!(pow(x, (p-1)>>1)==1))
     return finite_field<p>(0);
     while(m % 2 == 0)
-    {q >>= 1; s++;}
+    {q >>= 1; m++;}
     c = pow(non_residual, q);
     t = pow(x, q);
     r = pow(x, (q+1)>>1);

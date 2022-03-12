@@ -46,11 +46,55 @@ class finite_field
     {is >> f_p.value; return is;}
 };
 
+template<>
+class finite_field<2>
+{
+    private:
+    bool value;
+    public:
+    finite_field() {}
+    finite_field(int val)
+    : value(val) {}
+    finite_field(const finite_field<2> & copy)
+    : value(copy.value) {}
+    bool get_val() const {return value;}
+    bool operator==(const int & comp)
+    {return (value == comp);}
+    bool operator==(const finite_field<2> & comp)
+    {return !(this -> value ^ comp.value);}
+    finite_field<2> & operator+=(const finite_field<2> & add)
+    {this -> value ^= add.value; return *this;}
+    finite_field<2> & operator-=(const finite_field<2> & sub)
+    {this -> value ^= sub.value; return *this;}
+    finite_field<2> & operator*=(const finite_field<2> & mult)
+    {this -> value = this -> value && mult.value; return *this;}
+    finite_field<2> & operator/=(const finite_field<2> & div)
+    {this -> value = this -> value && div.value; return *this;}
+    finite_field<2> & operator=(const int & assign)
+    {this -> value = assign; return *this;}
+    finite_field<2> & operator=(const finite_field<2> & assign)
+    {if(this != &assign){value = assign.value;} return *this;}
+    const finite_field<2> operator+(const finite_field<2> & add) const
+    {return finite_field<2>(*this) += add;}
+    const finite_field<2> operator-(const finite_field<2> & sub) const
+    {return finite_field<2>(*this) -= sub;}
+    const finite_field<2> operator*(const finite_field<2> & mult) const
+    {return finite_field<2>(*this) *= mult;}
+    const finite_field<2> operator/(const finite_field<2> & div) const
+    {return finite_field<2>(*this) /= div;}
+    friend std::ostream & operator<<(std::ostream & os, 
+    const finite_field<2> & f_p)
+    {os << f_p.value; return os;}
+    friend std::istream & operator>>(std::istream & is,
+    finite_field<2> & f_p)
+    {is >> f_p.value; return is;}
+};
+
 template<typename mon>
 mon pow(mon base, unsigned long long int idx);
 
 template<int p>
-class sqrt
+class tonelli_shanks
 {
     private:
     std::random_device rd;
@@ -60,8 +104,16 @@ class sqrt
     finite_field<p> non_residual;
     void gen_non_res();
     public:
-    sqrt() {gen_non_res();}
-    finite_field<p> operator()(const finite_field<p> x);
+    tonelli_shanks() {gen_non_res();}
+    finite_field<p> operator()(finite_field<p> x);
+};
+
+template<>
+class tonelli_shanks<2>
+{
+    public:
+    finite_field<2> operator()(finite_field<2> x)
+    {return x;}
 };
 
 #include "finite_field.tpp"
