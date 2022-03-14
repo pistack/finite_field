@@ -21,6 +21,12 @@ class finite_field
         int b = (comp.value < 0 ? p+comp.value : comp.value);
         return a<b;
     }
+    bool operator>(const finite_field<p> & comp)
+    {
+        int a = (this->value < 0 ? p+this->value : this->value);
+        int b = (comp.value < 0 ? p+comp.value : comp.value);
+        return a>b;
+    }
     bool operator==(const int & comp)
     {return (value == comp);}
     bool operator==(const finite_field<p> & comp)
@@ -70,6 +76,8 @@ class finite_field<2>
     bool get_val() const {return value;}
     bool operator<(const finite_field<2> & comp)
     {return comp.value && (this->value ^ comp.value);}
+    bool operator>(const finite_field<2> & comp)
+    {return !comp.value && (this->value ^ comp.value);}
     bool operator==(const int & comp)
     {return (value == comp);}
     bool operator==(const finite_field<2> & comp)

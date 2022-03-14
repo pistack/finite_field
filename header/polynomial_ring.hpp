@@ -13,6 +13,7 @@ class polynomial_ring
     polynomial_ring(int d, finite_field<p>* c);
     polynomial_ring(const polynomial_ring<max_deg, p> & poly);
     bool operator<(const polynomial_ring<max_deg, p> & poly);
+    bool operator>(const polynomial_ring<max_deg, p> & poly);
     bool operator==(const polynomial_ring<max_deg, p> & poly);
     polynomial_ring<max_deg, p> & operator=(const polynomial_ring<max_deg, p> & assign);
     const polynomial_ring<max_deg, p> operator+(const polynomial_ring<max_deg, p> & add) const;
@@ -37,6 +38,9 @@ class polynomial_ring
         return is;
     }
 };
+
+template<int max_deg, int p>
+polynomial_ring<max_deg, p> mod_pow(polynomial_ring<max_deg, p> base, unsigned long long int idx, polynomial_ring<max_deg, p> & mod);
 
 #include "polynomial_ring.tpp"
 
