@@ -20,7 +20,7 @@ class polynomial_ring
     const polynomial_ring<max_deg, p> operator*(const polynomial_ring<max_deg, p> & mult) const;
     const polynomial_ring<max_deg, p> operator/(const polynomial_ring<max_deg, p> & div) const;
     const polynomial_ring<max_deg, p> operator%(const polynomial_ring<max_deg, p> & mod) const;
-    finite_field<p>* to_ary(int* d);
+    finite_field<p>* to_ary(int* d) const;
     friend std::ostream & operator<<(std::ostream & os, 
     const polynomial_ring<max_deg, p> & poly)
     {

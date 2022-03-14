@@ -169,3 +169,13 @@ const polynomial_ring<max_deg, p> polynomial_ring<max_deg, p>::operator/(const p
     }
     return q;
 }
+
+template<int max_deg, int p>
+finite_field<p>* polynomial_ring<max_deg, p>::to_ary(int* d) const
+{
+    finite_field<p>* ary = new finite_field<p>[this->deg+1];
+    *d = this->deg;
+    for(int i=0; i<=this->deg; i++)
+    ary[i] = this->coeff[i];
+    return ary;
+}
