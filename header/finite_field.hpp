@@ -15,10 +15,20 @@ class finite_field
     finite_field(const finite_field<p> & copy)
     : value(copy.value) {}
     int get_val() const {return value;}
+    bool operator<(const finite_field<p> & comp)
+    {
+        int a = (this->value < 0 ? p+this->value : this->value);
+        int b = (comp.value < 0 ? p+comp.value : comp.value);
+        return a<b;
+    }
     bool operator==(const int & comp)
     {return (value == comp);}
     bool operator==(const finite_field<p> & comp)
     {return ((this -> value - comp.value) % p == 0);}
+    bool operator!=(const int & comp)
+    {return (value != comp);}
+    bool operator!=(const finite_field<p> & comp)
+    {return ((this -> value - comp.value) % p != 0);}
     finite_field<p> & operator+=(const finite_field<p> & add)
     {this -> value += add.value; this -> value %= p; return *this;}
     finite_field<p> & operator-=(const finite_field<p> & sub)
@@ -58,10 +68,16 @@ class finite_field<2>
     finite_field(const finite_field<2> & copy)
     : value(copy.value) {}
     bool get_val() const {return value;}
+    bool operator<(const finite_field<2> & comp)
+    {return comp.value && (this->value ^ comp.value);}
     bool operator==(const int & comp)
     {return (value == comp);}
     bool operator==(const finite_field<2> & comp)
     {return !(this -> value ^ comp.value);}
+    bool operator!=(const int & comp)
+    {return (value != comp);}
+    bool operator!=(const finite_field<2> & comp)
+    {return this->value ^ comp.value;}
     finite_field<2> & operator+=(const finite_field<2> & add)
     {this -> value ^= add.value; return *this;}
     finite_field<2> & operator-=(const finite_field<2> & sub)
