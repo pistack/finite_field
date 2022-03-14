@@ -29,16 +29,16 @@ void kitamasa<ring>::allocate(ring* out_space, int size)
 
 template<typename ring>
 int kitamasa<ring>::mult(ring* x, ring* y, ring* mod,
-int deg_a, int deg_b, int deg_mod)
+int deg_x, int deg_y, int deg_mod)
 {
     ring tmp;
-    int deg_new = deg_a+deg_b;
+    int deg_new = deg_x+deg_y;
     for(int i=0; i<=deg_new; i++)
     r[i] = 0;
-    for(int i=0; i<=deg_a; i++)
+    for(int i=0; i<=deg_x; i++)
     {
-        for(int j=0; j<=deg_b; j++)
-        r[i+j] += a[i]*b[j];
+        for(int j=0; j<=deg_y; j++)
+        r[i+j] += x[i]*y[j];
     }
     for(int i=deg_new; i>=deg_mod; i--)
     {
@@ -50,7 +50,7 @@ int deg_a, int deg_b, int deg_mod)
     deg_new--;
     if(deg_new < 0) deg_new = 0;
     for(int i=0; i<=deg_new; i++)
-    a[i] = r[i];
+    x[i] = r[i];
     return deg_new;
 }
 
