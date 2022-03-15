@@ -7,8 +7,8 @@ typedef long long int ll;
 u_int64_t xorshift64(uint64_t x)
 {
     x ^= x << 13;
-    x ^= x >> 17;
-    x ^= x << 5;
+    x ^= x >> 7;
+    x ^= x << 17;
     return x;
 }
 
@@ -40,6 +40,12 @@ int main(void)
     std::cout << *deg << '\n';
     for(int i=0; i<=(*deg); i++)
     std::cout << char_poly[i] << ' ';
+    std::cout << '\n';
+    for(int i=0; i<=(*deg); i++)
+    {
+        if(char_poly[i].get_val())
+        std::cout << (*deg)-i << ' ';
+    }
     std::cout << '\n';
     for(int i=0; i<max_guess; i++)
     std::cout << i << ' ' << guess[i] << ' ' << kt(i, guess, char_poly, *deg) << '\n';

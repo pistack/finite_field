@@ -36,7 +36,7 @@ field gauss_elimination<field>::reduce(field* mat, int dim)
                 if(!(mat[rowj+i] == 0))
                 {
                     det *= field(-1);
-                    for(int k=0; k<dim; i++)
+                    for(int k=0; k<dim; k++)
                     {
                         tmp = mat[rowi+k];
                         mat[rowi+k] = mat[rowj+k];
@@ -51,7 +51,7 @@ field gauss_elimination<field>::reduce(field* mat, int dim)
         return field(0);
         det *= mat[rowi+i];
         a_inv = field(1)/mat[rowi+i];
-        for(int k=0; k<dim; i++)
+        for(int k=0; k<dim; k++)
         mat[rowi+k] *= a_inv;
         rowj = rowi+dim;
         for(int j=i+1; j<dim; j++)
@@ -85,7 +85,7 @@ bool gauss_elimination<field>::solve(field* mat, field* y, int dim)
                 if(!(mat[rowj+i] == 0))
                 {
                     tmp = y[i]; y[i] = y[j]; y[j] = tmp;
-                    for(int k=0; k<dim; i++)
+                    for(int k=0; k<dim; k++)
                     {
                         tmp = mat[rowi+k];
                         mat[rowi+k] = mat[rowj+k];
@@ -100,7 +100,7 @@ bool gauss_elimination<field>::solve(field* mat, field* y, int dim)
         return false;
         a_inv = field(1)/mat[rowi+i];
         y[i] *= a_inv;
-        for(int k=0; k<dim; i++)
+        for(int k=0; k<dim; k++)
         mat[rowi+k] *= a_inv;
         rowj = rowi+dim;
         for(int j=i+1; j<dim; j++)
@@ -148,7 +148,7 @@ bool gauss_elimination<field>::inverse(field* mat, field* inv, int dim)
             {
                 if(!(mat[rowj+i] == 0))
                 {
-                    for(int k=0; k<dim; i++)
+                    for(int k=0; k<dim; k++)
                     {
                         tmp1 = mat[rowi+k];
                         mat[rowi+k] = mat[rowj+k];
@@ -167,7 +167,7 @@ bool gauss_elimination<field>::inverse(field* mat, field* inv, int dim)
         return false;
 
         a_inv = field(1)/mat[rowi+i];
-        for(int k=0; k<dim; i++)
+        for(int k=0; k<dim; k++)
         {
             mat[rowi+k] *= a_inv;
             inv[rowi+k] *= a_inv;
