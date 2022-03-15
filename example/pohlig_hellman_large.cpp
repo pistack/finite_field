@@ -122,7 +122,6 @@ void xor_shift64_gen(ull x0, finite_field<2>* mat)
 {
     for(int i=0; i<64*64; i += 64)
     {
-        std::cout << x0 << '\n';
         int_to_poly(x0, mat+i);
         x0 = xorshift64(x0);
     }
@@ -184,28 +183,9 @@ int main(void)
 
     std::cin >> x0 >> xf;
     xor_shift64_gen(x0, poly_mat);
-    for(int i=0; i<=63; i++)
-    {
-        for(int j=0; j<=63; j++)
-        std::cout << poly_mat[i*64+j] << ' ';
-        std::cout << '\n';
-    }
-    std::cout << "end" << '\n';
     int_to_poly(xf, y);
-    for(int i=0; i<=63; i++)
-    std::cout << y[i] << ' ';
-    std::cout << '\n';
+    ge.transpose(poly_mat, 64);
     ge.solve(poly_mat, y, 64);
-    std::cout << "end" << '\n';
-    for(int i=0; i<=63; i++)
-    {
-        for(int j=0; j<=63; j++)
-        std::cout << poly_mat[i*64+j] << ' ';
-        std::cout << '\n';
-    }
-    for(int i=0; i<=63; i++)
-    std::cout << y[i] << ' ';
-    std::cout << '\n';
     deg = 63;
     while(y[deg] == 0)
     deg--;
@@ -218,7 +198,6 @@ int main(void)
     l_5 = baby_giant<sub_grp_5, grp_size>(a, P, inv_xm_5, space_5, m_5);
     l_6 = baby_giant<sub_grp_6, grp_size>(a, P, inv_xm_6, space_6, m_6);
     l_7 = baby_giant<sub_grp_7, grp_size>(a, P, inv_xm_7, space_7, m_7);
-    std::cout << l_1 << ' ' << l_2 << ' ' << l_3 << ' ' << l_4 << ' ' << l_5 << ' ' << l_6 << l_7 << '\n';
     result = ((__int128_t)l_1*f_1+(__int128_t)l_2*f_2+(__int128_t)l_3*f_3+
     (__int128_t)l_4*f_4+(__int128_t)l_5*f_5+(__int128_t)l_6*f_6+
     (__int128_t)l_7*f_7) % grp_size;

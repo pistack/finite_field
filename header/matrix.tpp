@@ -108,7 +108,7 @@ bool gauss_elimination<field>::solve(field* mat, field* y, int dim)
             tmp = mat[rowj+i];
             if(!(tmp == 0))
             {
-                y[i] -= tmp*y[j];
+                y[j] -= tmp*y[i];
                 for(int k=0; k<dim; k++)
                 mat[rowj+k] -= tmp*mat[rowi+k];
             }
