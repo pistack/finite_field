@@ -160,8 +160,8 @@ int main(void)
     polynomial_ring<length, 2> inv_xm_7;
     gauss_elimination<finite_field<2>> ge;
 
-    //std::ios_base::sync_with_stdio(false);
-    //std::cin.tie();
+    std::ios_base::sync_with_stdio(false);
+    std::cin.tie();
 
     for(int i=0; i<=64; i++)
     buffer[i] = 0;
