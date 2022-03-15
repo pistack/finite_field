@@ -28,13 +28,13 @@ class finite_field
         return a>b;
     }
     bool operator==(const int & comp)
-    {return (value == comp);}
+    {return (value == comp) || (value == p+comp) || (value == comp-p);}
     bool operator==(const finite_field<p> & comp)
-    {return ((this -> value - comp.value) % p == 0);}
+    {return (value == comp.value) || (value == p+comp.value) || (value == comp.value-p);}
     bool operator!=(const int & comp)
-    {return (value != comp);}
+    {return (value != comp) && (value != p+comp) && (value != comp-p);}
     bool operator!=(const finite_field<p> & comp)
-    {return ((this -> value - comp.value) % p != 0);}
+    {return (value != comp.value) && (value != p+comp.value) && (value != comp.value-p);}
     finite_field<p> & operator+=(const finite_field<p> & add)
     {this -> value += add.value; this -> value %= p; return *this;}
     finite_field<p> & operator-=(const finite_field<p> & sub)
@@ -116,6 +116,12 @@ class finite_field<2>
 
 template<typename mon>
 mon pow(mon base, unsigned long long int idx);
+
+template<typename ED>
+ED gcd(ED a, ED b);
+
+template<typename ED, typename... EDs>
+ED gcd(ED a, ED b, EDs... cs);
 
 template<int p>
 class tonelli_shanks

@@ -10,17 +10,28 @@ class polynomial_ring
 
     public:
     polynomial_ring() {};
+    polynomial_ring(int c) {deg = 0; coeff[0] = c % p;}
     polynomial_ring(int d, finite_field<p>* c);
     polynomial_ring(const polynomial_ring<max_deg, p> & poly);
     bool operator<(const polynomial_ring<max_deg, p> & poly);
     bool operator>(const polynomial_ring<max_deg, p> & poly);
+    bool operator==(int c)
+    {return (deg == 0) && (coeff[0] == c); }
+    bool operator!=(int c)
+    {return (deg > 0) || (coeff[0] != c);}
+    bool operator==(finite_field<p> c)
+    {return (deg == 0) && (coeff[0] == c); }
+    bool operator!=(finite_field<p> c)
+    {return (deg > 0) || (coeff[0] != c);}
     bool operator==(const polynomial_ring<max_deg, p> & poly);
+    bool operator!=(const polynomial_ring<max_deg, p> & poly);
     polynomial_ring<max_deg, p> & operator=(const polynomial_ring<max_deg, p> & assign);
     const polynomial_ring<max_deg, p> operator+(const polynomial_ring<max_deg, p> & add) const;
     const polynomial_ring<max_deg, p> operator-(const polynomial_ring<max_deg, p> & sub) const; 
     const polynomial_ring<max_deg, p> operator*(const polynomial_ring<max_deg, p> & mult) const;
     const polynomial_ring<max_deg, p> operator/(const polynomial_ring<max_deg, p> & div) const;
     const polynomial_ring<max_deg, p> operator%(const polynomial_ring<max_deg, p> & mod) const;
+    int get_deg() const {return deg;}
     finite_field<p>* to_ary(int* d) const;
     friend std::ostream & operator<<(std::ostream & os, 
     const polynomial_ring<max_deg, p> & poly)
@@ -40,7 +51,11 @@ class polynomial_ring
 };
 
 template<int max_deg, int p>
-polynomial_ring<max_deg, p> mod_pow(polynomial_ring<max_deg, p> base, unsigned long long int idx, polynomial_ring<max_deg, p> & mod);
+polynomial_ring<max_deg, p> mod_pow(polynomial_ring<max_deg, p> base, 
+unsigned long long int idx, polynomial_ring<max_deg, p> & mod);
+
+template<int max_deg, int p>
+bool is_primitive(polynomial_ring<max_deg, p> poly);
 
 #include "polynomial_ring.tpp"
 

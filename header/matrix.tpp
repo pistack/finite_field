@@ -33,7 +33,7 @@ field gauss_elimination<field>::reduce(field* mat, int dim)
             rowj = rowi+dim;
             for(int j=i+1; j<dim; j++)
             {
-                if(!(mat[rowj+i] == 0))
+                if(mat[rowj+i] != 0)
                 {
                     det *= field(-1);
                     for(int k=0; k<dim; k++)
@@ -57,7 +57,7 @@ field gauss_elimination<field>::reduce(field* mat, int dim)
         for(int j=i+1; j<dim; j++)
         {
             tmp = mat[rowj+i];
-            if(!(tmp == 0))
+            if(tmp != 0)
             {
                 for(int k=0; k<dim; k++)
                 mat[rowj+k] -= tmp*mat[rowi+k];
@@ -82,7 +82,7 @@ bool gauss_elimination<field>::solve(field* mat, field* y, int dim)
             rowj = rowi+dim;
             for(int j=i+1; j<dim; j++)
             {
-                if(!(mat[rowj+i] == 0))
+                if(mat[rowj+i] != 0)
                 {
                     tmp = y[i]; y[i] = y[j]; y[j] = tmp;
                     for(int k=0; k<dim; k++)
@@ -106,7 +106,7 @@ bool gauss_elimination<field>::solve(field* mat, field* y, int dim)
         for(int j=i+1; j<dim; j++)
         {
             tmp = mat[rowj+i];
-            if(!(tmp == 0))
+            if(tmp != 0)
             {
                 y[j] -= tmp*y[i];
                 for(int k=0; k<dim; k++)
@@ -146,7 +146,7 @@ bool gauss_elimination<field>::inverse(field* mat, field* inv, int dim)
             rowj = rowi+dim;
             for(int j=i+1; j<dim; j++)
             {
-                if(!(mat[rowj+i] == 0))
+                if(mat[rowj+i] != 0)
                 {
                     for(int k=0; k<dim; k++)
                     {
@@ -177,7 +177,7 @@ bool gauss_elimination<field>::inverse(field* mat, field* inv, int dim)
         for(int j=i+1; j<dim; j++)
         {
             tmp1 = mat[rowj+i];
-            if(!(tmp1 == 0))
+            if(tmp1 != 0)
             {
                 for(int k=0; k<dim; k++)
                 {

@@ -17,16 +17,12 @@ polynomial_ring<max_deg, p>::polynomial_ring(const polynomial_ring<max_deg, p> &
 template<int max_deg, int p>
 bool polynomial_ring<max_deg, p>::operator<(const polynomial_ring<max_deg, p> & poly)
 {
-    if(deg < poly.deg)
-    return true;
-    if(poly.deg < deg)
-    return false;
+    if(deg != poly.deg)
+    return (deg < poly.deg);
     for(int i=deg; i>=0; i--)
     {
-        if(this->coeff[i]<poly.coeff[i])
-        return true;
-        if(this->coeff[i]>poly.coeff[i])
-        return false;
+        if(this -> coeff[i] != poly.coeff[i])
+        return (this -> coeff[i] < poly.coeff[i]);
     }
     return false;
 }
@@ -34,16 +30,12 @@ bool polynomial_ring<max_deg, p>::operator<(const polynomial_ring<max_deg, p> & 
 template<int max_deg, int p>
 bool polynomial_ring<max_deg, p>::operator>(const polynomial_ring<max_deg, p> & poly)
 {
-    if(deg < poly.deg)
-    return true;
-    if(poly.deg < deg)
-    return false;
+    if(deg != poly.deg)
+    return (deg > poly.deg);
     for(int i=deg; i>=0; i--)
     {
-        if(this->coeff[i]>poly.coeff[i])
-        return true;
-        if(this->coeff[i]<poly.coeff[i])
-        return false;
+        if(this -> coeff[i] != poly.coeff[i])
+        return (this -> coeff[i] > poly.coeff[i]);
     }
     return false;
 }
@@ -56,6 +48,19 @@ bool polynomial_ring<max_deg, p>::operator==(const polynomial_ring<max_deg, p> &
     for(int i=deg; i>=0; i--)
     {
         if(coeff[i] != poly.coeff[i])
+        return false;
+    }
+    return true;
+}
+
+template<int max_deg, int p>
+bool polynomial_ring<max_deg, p>::operator!=(const polynomial_ring<max_deg, p> & poly)
+{
+    if(deg == poly.deg)
+    return false;
+    for(int i=deg; i>=0; i--)
+    {
+        if(coeff[i] == poly.coeff[i])
         return false;
     }
     return true;
@@ -215,4 +220,78 @@ polynomial_ring<max_deg, p> mod_pow(polynomial_ring<max_deg, p> base, unsigned l
         base = base*base; base = base % mod; idx >>= 1;
     }
     return r;
+}
+
+template<int max_deg, int p>
+bool is_primitive(polynomial_ring<max_deg, p> poly)
+{
+    finite_field<p> c[2] = {finite_field<p>(0), finite_field<p>(1)};
+    polynomial_ring<max_deg, p> x(1, c), pow_x = x;
+    int fact_n[20];
+    int n = poly.get_deg(), tmp, num_fact;
+    if(n == 0)
+    return false;
+    if(n == 1)
+    return true;
+    tmp = n; num_fact = 0;
+    for(int i=2; i*i<=tmp; i++)
+    {
+        if(tmp % i == 0)
+        {
+            fact_n[num_fact] = i; num_fact++;
+            while(tmp % i == 0)
+            tmp /= i;
+        }
+    }
+    if(tmp > 1)
+    {fact_n[num_fact] = tmp; num_fact++;}
+    for(int i=0; i<n/fact_n[num_fact-1]; i++)
+    pow_x = mod_pow(pow_x, p, poly);
+    if(gcd(pow_x-x, poly) != 1)
+    return false;
+    for(int i=num_fact-1; i>0; i--)
+    {
+        for(int j=n/fact_n[i]; j<n/fact_n[i-1]; j++)
+        pow_x = mod_pow(pow_x, p, poly);
+        if(gcd(pow_x-x, poly) != 1)
+        return false;
+    }
+    return true;
+}
+
+template<int max_deg>
+bool is_primitive(polynomial_ring<max_deg, 2> poly)
+{
+    finite_field<2> c[2] = {finite_field<2>(0), finite_field<2>(1)};
+    polynomial_ring<max_deg, 2> x(1, c), pow_x = x;
+    int fact_n[20];
+    int n = poly.get_deg(), tmp, num_fact;
+    if(n == 0)
+    return false;
+    if(n == 1)
+    return true;
+    tmp = n; num_fact = 0;
+    for(int i=2; i*i<=tmp; i++)
+    {
+        if(tmp % i == 0)
+        {
+            fact_n[num_fact] = i; num_fact++;
+            while(tmp % i == 0)
+            tmp /= i;
+        }
+    }
+    if(tmp > 1)
+    {fact_n[num_fact] = tmp; num_fact++;}
+    for(int i=0; i<n/fact_n[num_fact-1]; i++)
+    {pow_x = pow_x * pow_x; pow_x = pow_x % poly;}
+    if(gcd(pow_x-x, poly) != 1)
+    return false;
+    for(int i=num_fact-1; i>0; i--)
+    {
+        for(int j=n/fact_n[i]; j<n/fact_n[i-1]; j++)
+        {pow_x = pow_x * pow_x; pow_x = pow_x % poly;}
+        if(gcd(pow_x-x, poly) != 1)
+        return false;
+    }
+    return true;
 }

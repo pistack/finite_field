@@ -162,7 +162,6 @@ int main(void)
 
     std::ios_base::sync_with_stdio(false);
     std::cin.tie();
-
     for(int i=0; i<=64; i++)
     buffer[i] = 0;
     buffer[64] = 1; buffer[56] = 1; buffer[53] = 1; buffer[52] = 1; 
@@ -180,7 +179,6 @@ int main(void)
     inv_xm_5 = cache_space<sub_grp_5, grp_size>(space_5, P, m_5);
     inv_xm_6 = cache_space<sub_grp_6, grp_size>(space_6, P, m_6);
     inv_xm_7 = cache_space<sub_grp_7, grp_size>(space_7, P, m_7);
-
     std::cin >> x0 >> xf;
     xor_shift64_gen(x0, poly_mat);
     int_to_poly(xf, y);

@@ -13,6 +13,21 @@ finite_field<p> & finite_field<p>::operator/=(const finite_field<p> & div)
     return *this;
 }
 
+template<typename ED>
+ED gcd(ED a, ED b)
+{
+    ED tmp;
+    while(b != 0)
+    {tmp = b; b = a % b; a = tmp;}
+    return a;
+}
+
+template<typename ED, typename... EDs>
+ED gcd(ED a, ED b, EDs... cs)
+{
+    return gcd(a, gcd(b, cs...));
+}
+
 template<typename mon>
 mon pow(mon base, unsigned long long int idx)
 {
