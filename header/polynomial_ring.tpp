@@ -223,7 +223,7 @@ polynomial_ring<max_deg, p> mod_pow(polynomial_ring<max_deg, p> base, unsigned l
 }
 
 template<int max_deg, int p>
-bool is_primitive(polynomial_ring<max_deg, p> poly)
+bool is_prime(polynomial_ring<max_deg, p> poly)
 {
     finite_field<p> c[2] = {finite_field<p>(0), finite_field<2>(1)};
     polynomial_ring<max_deg, p> x(1, c), pow_x = x;
@@ -242,7 +242,7 @@ bool is_primitive(polynomial_ring<max_deg, p> poly)
 }
 
 template<int max_deg>
-bool is_primitive(polynomial_ring<max_deg, 2> poly)
+bool is_prime(polynomial_ring<max_deg, 2> poly)
 {
     finite_field<2> c[2] = {finite_field<2>(0), finite_field<2>(1)};
     polynomial_ring<max_deg, 2> x(1, c), pow_x = x;

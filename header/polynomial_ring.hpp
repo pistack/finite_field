@@ -55,7 +55,7 @@ polynomial_ring<max_deg, p> mod_pow(polynomial_ring<max_deg, p> base,
 unsigned long long int idx, polynomial_ring<max_deg, p> & mod);
 
 template<int max_deg, int p>
-bool is_primitive(polynomial_ring<max_deg, p> poly);
+bool is_prime(polynomial_ring<max_deg, p> poly);
 
 #include "polynomial_ring.tpp"
 
