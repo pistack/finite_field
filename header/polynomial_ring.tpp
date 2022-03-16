@@ -227,18 +227,37 @@ bool is_prime(polynomial_ring<max_deg, p> poly)
 {
     finite_field<p> c[2] = {finite_field<p>(0), finite_field<2>(1)};
     polynomial_ring<max_deg, p> x(1, c), pow_x = x;
-    int n = poly.get_deg();
+    int primes[20], num_prime = 0;
+    int n = poly.get_deg(), tmp = n;
     if(n == 0)
     return false;
     if(n == 1)
     return true;
-    for(int i=1; i<=(n>>1); i++)
+    for(int i=2; i*i<=tmp; i++)
     {
+        if(tmp % i == 0)
+        {
+            primes[num_prime] = i; num_prime++;
+            while(tmp % i == 0)
+            tmp /= i;
+        }
+    }
+    if(tmp > 1)
+    primes[num_prime] = tmp; num_prime++;
+    for(int i=0; i<n/primes[num_prime-1]; i++)
+    pow_x = mod_pow(pow_x, p, poly);
+    if(gcd(pow_x-x, poly) != 1)
+    return false;
+    for(int i=num_prime-1; i>0; i--)
+    {
+        for(int j=n/primes[i]; j<n/primes[i-1]; j++)
         pow_x = mod_pow(pow_x, p, poly);
         if(gcd(pow_x-x, poly) != 1)
         return false;
     }
-    return true;
+    for(int i=n/primes[0]; i<n; i++)
+    pow_x = mod_pow(pow_x, p, poly);
+    return (pow_x == x);
 }
 
 template<int max_deg>
@@ -246,16 +265,35 @@ bool is_prime(polynomial_ring<max_deg, 2> poly)
 {
     finite_field<2> c[2] = {finite_field<2>(0), finite_field<2>(1)};
     polynomial_ring<max_deg, 2> x(1, c), pow_x = x;
-    int n = poly.get_deg();
+    int primes[20], num_prime = 0;
+    int n = poly.get_deg(), tmp = n;
     if(n == 0)
     return false;
     if(n == 1)
     return true;
-    for(int i=1; i<=(n>>1); i++)
+    for(int i=2; i*i<=tmp; i++)
     {
-        pow_x = pow_x*pow_x; pow_x = pow_x % poly;
+        if(tmp % i == 0)
+        {
+            primes[num_prime] = i; num_prime++;
+            while(tmp % i == 0)
+            tmp /= i;
+        }
+    }
+    if(tmp > 1)
+    primes[num_prime] = tmp; num_prime++;
+    for(int i=0; i<n/primes[num_prime-1]; i++)
+    {pow_x = pow_x*pow_x; pow_x = pow_x % poly;}
+    if(gcd(pow_x-x, poly) != 1)
+    return false;
+    for(int i=num_prime-1; i>0; i--)
+    {
+        for(int j=n/primes[i]; j<n/primes[i-1]; j++)
+        {pow_x = pow_x*pow_x; pow_x = pow_x % poly;}
         if(gcd(pow_x-x, poly) != 1)
         return false;
     }
-    return true;
+    for(int i=n/primes[0]; i<n; i++)
+    {pow_x = pow_x*pow_x; pow_x = pow_x % poly;}
+    return (pow_x == x);
 }
