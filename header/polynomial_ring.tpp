@@ -243,7 +243,7 @@ bool is_prime(polynomial_ring<max_deg, p> poly)
         }
     }
     if(tmp > 1)
-    primes[num_prime] = tmp; num_prime++;
+    {primes[num_prime] = tmp; num_prime++;}
     for(int i=0; i<n/primes[num_prime-1]; i++)
     pow_x = mod_pow(pow_x, p, poly);
     if(gcd(pow_x-x, poly) != 1)
@@ -281,7 +281,7 @@ bool is_prime(polynomial_ring<max_deg, 2> poly)
         }
     }
     if(tmp > 1)
-    primes[num_prime] = tmp; num_prime++;
+    {primes[num_prime] = tmp; num_prime++;}
     for(int i=0; i<n/primes[num_prime-1]; i++)
     {pow_x = pow_x*pow_x; pow_x = pow_x % poly;}
     if(gcd(pow_x-x, poly) != 1)
