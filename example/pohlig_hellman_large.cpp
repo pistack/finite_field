@@ -179,6 +179,7 @@ int main(void)
     inv_xm_5 = cache_space<sub_grp_5, grp_size>(space_5, P, m_5);
     inv_xm_6 = cache_space<sub_grp_6, grp_size>(space_6, P, m_6);
     inv_xm_7 = cache_space<sub_grp_7, grp_size>(space_7, P, m_7);
+    std::cout << is_primitive(P) << '\n';
     std::cin >> x0 >> xf;
     xor_shift64_gen(x0, poly_mat);
     int_to_poly(xf, y);

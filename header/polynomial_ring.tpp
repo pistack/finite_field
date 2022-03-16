@@ -225,33 +225,15 @@ polynomial_ring<max_deg, p> mod_pow(polynomial_ring<max_deg, p> base, unsigned l
 template<int max_deg, int p>
 bool is_primitive(polynomial_ring<max_deg, p> poly)
 {
-    finite_field<p> c[2] = {finite_field<p>(0), finite_field<p>(1)};
+    finite_field<p> c[2] = {finite_field<p>(0), finite_field<2>(1)};
     polynomial_ring<max_deg, p> x(1, c), pow_x = x;
-    int fact_n[20];
-    int n = poly.get_deg(), tmp, num_fact;
+    int n = poly.get_deg();
     if(n == 0)
     return false;
     if(n == 1)
     return true;
-    tmp = n; num_fact = 0;
-    for(int i=2; i*i<=tmp; i++)
+    for(int i=1; i<=(n>>1); i++)
     {
-        if(tmp % i == 0)
-        {
-            fact_n[num_fact] = i; num_fact++;
-            while(tmp % i == 0)
-            tmp /= i;
-        }
-    }
-    if(tmp > 1)
-    {fact_n[num_fact] = tmp; num_fact++;}
-    for(int i=0; i<n/fact_n[num_fact-1]; i++)
-    pow_x = mod_pow(pow_x, p, poly);
-    if(gcd(pow_x-x, poly) != 1)
-    return false;
-    for(int i=num_fact-1; i>0; i--)
-    {
-        for(int j=n/fact_n[i]; j<n/fact_n[i-1]; j++)
         pow_x = mod_pow(pow_x, p, poly);
         if(gcd(pow_x-x, poly) != 1)
         return false;
@@ -264,32 +246,14 @@ bool is_primitive(polynomial_ring<max_deg, 2> poly)
 {
     finite_field<2> c[2] = {finite_field<2>(0), finite_field<2>(1)};
     polynomial_ring<max_deg, 2> x(1, c), pow_x = x;
-    int fact_n[20];
-    int n = poly.get_deg(), tmp, num_fact;
+    int n = poly.get_deg();
     if(n == 0)
     return false;
     if(n == 1)
     return true;
-    tmp = n; num_fact = 0;
-    for(int i=2; i*i<=tmp; i++)
+    for(int i=1; i<=(n>>1); i++)
     {
-        if(tmp % i == 0)
-        {
-            fact_n[num_fact] = i; num_fact++;
-            while(tmp % i == 0)
-            tmp /= i;
-        }
-    }
-    if(tmp > 1)
-    {fact_n[num_fact] = tmp; num_fact++;}
-    for(int i=0; i<n/fact_n[num_fact-1]; i++)
-    {pow_x = pow_x * pow_x; pow_x = pow_x % poly;}
-    if(gcd(pow_x-x, poly) != 1)
-    return false;
-    for(int i=num_fact-1; i>0; i--)
-    {
-        for(int j=n/fact_n[i]; j<n/fact_n[i-1]; j++)
-        {pow_x = pow_x * pow_x; pow_x = pow_x % poly;}
+        pow_x = pow_x*pow_x; pow_x = pow_x % poly;
         if(gcd(pow_x-x, poly) != 1)
         return false;
     }
