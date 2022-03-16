@@ -17,15 +17,13 @@ class finite_field
     int get_val() const {return value;}
     bool operator<(const finite_field<p> & comp)
     {
-        int a = (this->value < 0 ? p+this->value : this->value);
-        int b = (comp.value < 0 ? p+comp.value : comp.value);
-        return a<b;
+        return (this->value < 0 ? p+this->value : this->value)<\
+        (comp.value < 0 ? p+comp.value : comp.value);
     }
     bool operator>(const finite_field<p> & comp)
     {
-        int a = (this->value < 0 ? p+this->value : this->value);
-        int b = (comp.value < 0 ? p+comp.value : comp.value);
-        return a>b;
+        return (this->value < 0 ? p+this->value : this->value)>\
+        (comp.value < 0 ? p+comp.value : comp.value);
     }
     bool operator==(const int & comp)
     {return (value == comp) || (value == p+comp) || (value == comp-p);}
