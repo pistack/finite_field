@@ -1,47 +1,25 @@
 template<int k, int p>
 ntt<k, p>::ntt()
 {
-    finite_field<p> w_prod, w_inv_prod;
-    wisdom();
-    w_prod = w; w_inv_prod = w_inv;
-    for(int i=0; i<k; i++)
-    {
-        pow_w[i] = w_prod;
-        pow_w[k+i] = w_inv_prod;
-        w_prod *= w_prod;
-        w_inv_prod *= w_inv_prod;
-    }
-    size_inv[0] = finite_field<p>(1); 
-    size_inv[1] = finite_field<p>(1)/finite_field<p>(2);
-    for(int i=2; i<=k; i++)
-    size_inv[i] = size_inv[1]*size_inv[i-1];
-}
-
-template<int k, int p>
-void ntt<k, p>::wisdom()
-{
     int idx_2 = 0;
-    int tmp;
-    finite_field<p> candidate;
+    int tmp = p-1;
+    finite_field<p> candidate = quad_non_res<p>();
 
-    tmp = p-1;
     while(tmp % 2 == 0)
     {idx_2++; tmp >>= 1;}
-    candidate = finite_field<p>(dist(gen));
-    while(pow(candidate, (p-1)/2) == 1)
-    candidate = finite_field<p>(dist(gen));
     candidate = pow(candidate, tmp<<(idx_2-k));
     w = candidate; w_inv = finite_field<p>(1)/w;
     return;
 }
 
 template<int k, int p>
-void ntt<k, p>::operator()(finite_field<p>* ary, int k_idx, bool inverse)
+void ntt<k, p>::operator()(finite_field<p>* ary, int k_idx, bool inverse) const
 {
-    int w_idx = (inverse ? 2*k-1 : k-1);
-    int size = 1<<k_idx;
+    finite_field<p> w_idx = (inverse ? pow(w_inv, 1<<(k-k_idx)) : 
+    pow(w, 1<<(k-k_idx)));
     finite_field<p> inv_size, tmp_1, tmp_2;
     finite_field<p> factor_curr, factor_accum;
+    int size = 1<<k_idx;
     int dist, mask, half_curr_size;
     int j = 0;
 
@@ -58,7 +36,7 @@ void ntt<k, p>::operator()(finite_field<p>* ary, int k_idx, bool inverse)
     for(int curr_size = 2; curr_size <= size; curr_size <<= 1)
     {
         dist >>= 1;
-        factor_curr = pow_w[w_idx];
+        factor_curr = pow(w_idx, dist);
         for(int from=0; from<size; from += curr_size)
         {
             factor_accum = 1; half_curr_size = curr_size >>1;
@@ -71,12 +49,11 @@ void ntt<k, p>::operator()(finite_field<p>* ary, int k_idx, bool inverse)
                 factor_accum *= factor_curr;
             }
         }
-        w_idx--;
     }
 
     if(inverse)
     {
-        inv_size = size_inv[k_idx];
+        inv_size = finite_field<p>(1)/finite_field<p>(size);
         for(int i=0; i<size; i++)
         ary[i] *= inv_size;
     }

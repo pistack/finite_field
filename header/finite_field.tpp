@@ -1,8 +1,8 @@
 template<int p>
-finite_field<p> & finite_field<p>::operator/=(const finite_field<p> & div)
+constexpr finite_field<p> & finite_field<p>::operator/=(const finite_field<p> & div)
 {
     int a = (div.value<0 ? p+div.value : div.value); 
-    int b = p, x0 = 0, x1 = 1, q, t;
+    int b = p, x0 = 0, x1 = 1, q = 0, t = 0;
     while(a > 0)
     {
         q = b/a; t = x0; x0 = x1; x1 = t - q*x1;
@@ -29,7 +29,7 @@ ED gcd(ED a, ED b, EDs... cs)
 }
 
 template<typename mon>
-mon pow(mon base, unsigned long long int idx)
+constexpr mon pow(mon base, unsigned long long int idx)
 {
     mon result = 1;
     while(idx > 0)
@@ -42,20 +42,23 @@ mon pow(mon base, unsigned long long int idx)
 }
 
 template<int p>
-void tonelli_shanks<p>::gen_non_res()
+constexpr finite_field<p> quad_non_res()
 {
-    int tmp;
-    do
-    {tmp = dist(rng); non_residual = tmp;} 
-    while (pow(non_residual, (p-1)>>1) == 1);
-    return;
+    finite_field<p> val(0);
+    for(int i=2; i<p; i++)
+    {
+        val = i;
+        if(pow(val, (p-1)>>1) != 1)
+        break;
+    }
+    return val;
 }
 
 template<int p>
-finite_field<p> tonelli_shanks<p>::operator()(finite_field<p> x)
+constexpr finite_field<p> tonelli_shanks<p>::operator()(finite_field<p> x)
 {
-    int q = p-1, m = 0, i;
-    finite_field<p> b, c, t, r;
+    int q = p-1, m = 0, i = 0;
+    finite_field<p> b(0), c(0), t(0), r(0);
     if(!(pow(x, (p-1)>>1)==1))
     return finite_field<p>(0);
     while(m % 2 == 0)

@@ -1,6 +1,5 @@
 #ifndef FINITE_FIELD_H
 #define FINITE_FIELD_H
-#include <random>
 #include <iostream>
 
 template<int p>
@@ -10,47 +9,51 @@ class finite_field
     int value;
     public:
     finite_field() {}
-    finite_field(int val)
+    constexpr finite_field(const int & val)
     : value(val) {}
-    finite_field(const finite_field<p> & copy)
+    constexpr finite_field(const finite_field<p> & copy)
     : value(copy.value) {}
-    int get_val() const {return value;}
-    bool operator<(const finite_field<p> & comp)
+    constexpr int get_val() const {return value;}
+    constexpr bool operator<(const finite_field<p> & comp)
     {
         return (this->value < 0 ? p+this->value : this->value)<\
         (comp.value < 0 ? p+comp.value : comp.value);
     }
-    bool operator>(const finite_field<p> & comp)
+    constexpr bool operator>(const finite_field<p> & comp)
     {
         return (this->value < 0 ? p+this->value : this->value)>\
         (comp.value < 0 ? p+comp.value : comp.value);
     }
-    bool operator==(const int & comp)
+    constexpr bool operator==(const int & comp)
     {return (value == comp) || (value == p+comp) || (value == comp-p);}
-    bool operator==(const finite_field<p> & comp)
+    constexpr bool operator==(const finite_field<p> & comp)
     {return (value == comp.value) || (value == p+comp.value) || (value == comp.value-p);}
-    bool operator!=(const int & comp)
+    constexpr bool operator!=(const int & comp)
     {return (value != comp) && (value != p+comp) && (value != comp-p);}
-    bool operator!=(const finite_field<p> & comp)
+    constexpr bool operator!=(const finite_field<p> & comp)
     {return (value != comp.value) && (value != p+comp.value) && (value != comp.value-p);}
-    finite_field<p> & operator+=(const finite_field<p> & add)
+    constexpr finite_field<p> & operator+=(const finite_field<p> & add)
     {this -> value += add.value; this -> value %= p; return *this;}
-    finite_field<p> & operator-=(const finite_field<p> & sub)
+    constexpr finite_field<p> & operator-=(const finite_field<p> & sub)
     {this -> value -= sub.value; this -> value %= p; return *this;}
-    finite_field<p> & operator*=(const finite_field<p> & mult)
+    constexpr finite_field<p> & operator*=(const finite_field<p> & mult)
     {this -> value = (1ll*(this->value)*mult.value) % p; return *this;}
-    finite_field<p> & operator/=(const finite_field<p> & div);
-    finite_field<p> & operator=(const int & assign)
+    constexpr finite_field<p> & operator*=(const int & mult)
+    {this -> value = (1ll*(this->value)*mult) % p; return *this;}
+    constexpr finite_field<p> & operator/=(const finite_field<p> & div);
+    constexpr finite_field<p> & operator=(const int & assign)
     {this -> value = assign; return *this;}
-    finite_field<p> & operator=(const finite_field<p> & assign)
+    constexpr finite_field<p> & operator=(const finite_field<p> & assign)
     {if(this != &assign){value = assign.value;} return *this;}
-    const finite_field<p> operator+(const finite_field<p> & add) const
+    constexpr finite_field<p> operator+(const finite_field<p> & add) const
     {return finite_field<p>(*this) += add;}
-    const finite_field<p> operator-(const finite_field<p> & sub) const
+    constexpr finite_field<p> operator-(const finite_field<p> & sub) const
     {return finite_field<p>(*this) -= sub;}
-    const finite_field<p> operator*(const finite_field<p> & mult) const
+    constexpr finite_field<p> operator*(const int & mult) const
     {return finite_field<p>(*this) *= mult;}
-    const finite_field<p> operator/(const finite_field<p> & div) const
+    constexpr finite_field<p> operator*(const finite_field<p> & mult) const
+    {return finite_field<p>(*this) *= mult;}
+    constexpr finite_field<p> operator/(const finite_field<p> & div) const
     {return finite_field<p>(*this) /= div;}
     friend std::ostream & operator<<(std::ostream & os, 
     const finite_field<p> & f_p)
@@ -67,42 +70,46 @@ class finite_field<2>
     bool value;
     public:
     finite_field() {}
-    finite_field(int val)
+    constexpr finite_field(const int & val)
     : value(val) {}
-    finite_field(const finite_field<2> & copy)
+    constexpr finite_field(const finite_field<2> & copy)
     : value(copy.value) {}
-    bool get_val() const {return value;}
-    bool operator<(const finite_field<2> & comp)
+    constexpr bool get_val() const {return value;}
+    constexpr bool operator<(const finite_field<2> & comp)
     {return comp.value && (this->value ^ comp.value);}
-    bool operator>(const finite_field<2> & comp)
+    constexpr bool operator>(const finite_field<2> & comp)
     {return !comp.value && (this->value ^ comp.value);}
-    bool operator==(const int & comp)
+    constexpr bool operator==(const int & comp)
     {return (value == comp);}
-    bool operator==(const finite_field<2> & comp)
+    constexpr bool operator==(const finite_field<2> & comp)
     {return !(this -> value ^ comp.value);}
-    bool operator!=(const int & comp)
+    constexpr bool operator!=(const int & comp)
     {return (value != comp);}
-    bool operator!=(const finite_field<2> & comp)
+    constexpr bool operator!=(const finite_field<2> & comp)
     {return this->value ^ comp.value;}
-    finite_field<2> & operator+=(const finite_field<2> & add)
+    constexpr finite_field<2> & operator+=(const finite_field<2> & add)
     {this -> value ^= add.value; return *this;}
-    finite_field<2> & operator-=(const finite_field<2> & sub)
+    constexpr finite_field<2> & operator-=(const finite_field<2> & sub)
     {this -> value ^= sub.value; return *this;}
-    finite_field<2> & operator*=(const finite_field<2> & mult)
+    constexpr finite_field<2> & operator*=(const int & mult)
+    {this -> value = this -> value && (mult != 0); return *this;}
+    constexpr finite_field<2> & operator*=(const finite_field<2> & mult)
     {this -> value = this -> value && mult.value; return *this;}
-    finite_field<2> & operator/=(const finite_field<2> & div)
+    constexpr finite_field<2> & operator/=(const finite_field<2> & div)
     {this -> value = this -> value && div.value; return *this;}
-    finite_field<2> & operator=(const int & assign)
+    constexpr finite_field<2> & operator=(const int & assign)
     {this -> value = assign; return *this;}
-    finite_field<2> & operator=(const finite_field<2> & assign)
+    constexpr finite_field<2> & operator=(const finite_field<2> & assign)
     {if(this != &assign){value = assign.value;} return *this;}
-    const finite_field<2> operator+(const finite_field<2> & add) const
+    constexpr finite_field<2> operator+(const finite_field<2> & add) const
     {return finite_field<2>(*this) += add;}
-    const finite_field<2> operator-(const finite_field<2> & sub) const
+    constexpr finite_field<2> operator-(const finite_field<2> & sub) const
     {return finite_field<2>(*this) -= sub;}
-    const finite_field<2> operator*(const finite_field<2> & mult) const
+    constexpr finite_field<2> operator*(const int & mult) const
     {return finite_field<2>(*this) *= mult;}
-    const finite_field<2> operator/(const finite_field<2> & div) const
+    constexpr finite_field<2> operator*(const finite_field<2> & mult) const
+    {return finite_field<2>(*this) *= mult;}
+    constexpr finite_field<2> operator/(const finite_field<2> & div) const
     {return finite_field<2>(*this) /= div;}
     friend std::ostream & operator<<(std::ostream & os, 
     const finite_field<2> & f_p)
@@ -113,7 +120,7 @@ class finite_field<2>
 };
 
 template<typename mon>
-mon pow(mon base, unsigned long long int idx);
+constexpr mon pow(mon base, unsigned long long int idx);
 
 template<typename ED>
 ED gcd(ED a, ED b);
@@ -122,26 +129,24 @@ template<typename ED, typename... EDs>
 ED gcd(ED a, ED b, EDs... cs);
 
 template<int p>
+constexpr finite_field<p> quad_non_res();
+
+template<int p>
 class tonelli_shanks
 {
     private:
-    std::random_device rd;
-    std::mt19937 rng{rd()};
-    std::uniform_int_distribution<int> dist = \
-    std::uniform_int_distribution<int>(2, p-1);
-    finite_field<p> non_residual;
-    void gen_non_res();
+    static finite_field<p> non_residual = quad_non_res<p>();
     public:
-    tonelli_shanks() {gen_non_res();}
-    finite_field<p> operator()(finite_field<p> x);
+    tonelli_shanks() {}
+    constexpr finite_field<p> operator()(finite_field<p> x);
 };
 
 template<>
 class tonelli_shanks<2>
 {
     public:
-    finite_field<2> operator()(finite_field<2> x)
-    {return x;}
+    constexpr finite_field<2> operator()(const finite_field<2> & x)
+    {return finite_field<2>(x);}
 };
 
 #include "finite_field.tpp"

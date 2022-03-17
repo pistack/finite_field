@@ -7,7 +7,7 @@ template<int k, int p>
 class multipoint_evaluation
 {
     private:
-    ntt<k+2, p> ntt_p;
+    static ntt<k+2, p> ntt_p;
     int allocated_idx = -1;
     finite_field<p> *space;
     finite_field<p> *poly_tree;
