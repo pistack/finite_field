@@ -252,7 +252,7 @@ bool is_prime(polynomial_ring<max_deg, p> poly)
     {
         for(int j=n/primes[i]; j<n/primes[i-1]; j++)
         pow_x = mod_pow(pow_x, p, poly);
-        if(gcd(pow_x-x, poly) != 1)
+        if(gcd(pow_x-x, poly).get_deg() > 0 || pow_x == x)
         return false;
     }
     for(int i=n/primes[0]; i<n; i++)
