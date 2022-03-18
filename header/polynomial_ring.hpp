@@ -19,7 +19,7 @@ class polynomial_ring
 
     void kernel_fft_div(finite_field<p>* a, finite_field<p>* b, finite_field<p>* r,
     int deg_a, int deg_b) const;
-    void kernel_ftt_mod(finite_field<p>* a, finite_field<p>* b, finite_field<p>* r,
+    void kernel_fft_mod(finite_field<p>* a, finite_field<p>* b, finite_field<p>* r,
     int deg_a, int deg_b) const;
 
     public:

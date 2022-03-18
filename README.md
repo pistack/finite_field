@@ -12,5 +12,5 @@ via Bluestein Algorithm
 8. Find square root via Tonelli Shanks Algorithm
 
 ## TODO
-1. Speed up Kitamsa Method via Number Theoretic Transform
+1. Speed up polynomial Arithmetic via NTT
 2. Find square root of polynomial 
