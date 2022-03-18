@@ -58,24 +58,24 @@ template<int p>
 constexpr finite_field<p> tonelli_shanks<p>::non_residual;
 
 template<int p>
-constexpr finite_field<p> tonelli_shanks<p>::operator()(finite_field<p> x)
+constexpr finite_field<p> tonelli_shanks<p>::operator()(finite_field<p> x) const
 {
     int q = p-1, m = 0, i = 0;
-    finite_field<p> b(0), c(0), t(0), r(0);
-    if(!(pow(x, (p-1)>>1)==1))
+    finite_field<p> b(0), c(0), t(0), pow_t(0), r(0);
+    if(pow(x, (p-1)>>1)!=1)
     return finite_field<p>(0);
-    while(m % 2 == 0)
+    while(q % 2 == 0)
     {q >>= 1; m++;}
     c = pow(non_residual, q);
     t = pow(x, q);
     r = pow(x, (q+1)>>1);
-    while(!(t == 1))
+    while(t != 1)
     {
-        b = c;
+        b = c; pow_t = t;
         for(int j=1; j<m; j++)
         {
-            t *= t;
-            if(t == 1)
+            pow_t *= pow_t;
+            if(pow_t == 1)
             {i = j; break;}
         }
         for(int j=1; j<m-i; j++)

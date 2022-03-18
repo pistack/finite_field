@@ -135,15 +135,16 @@ class tonelli_shanks
     private:
     static constexpr finite_field<p> non_residual = quad_non_res<p>();
     public:
-    tonelli_shanks() {}
-    constexpr finite_field<p> operator()(finite_field<p> x);
+    constexpr tonelli_shanks() {}
+    constexpr finite_field<p> operator()(finite_field<p> x) const;
 };
 
 template<>
 class tonelli_shanks<2>
 {
     public:
-    constexpr finite_field<2> operator()(const finite_field<2> & x)
+    constexpr tonelli_shanks() {}
+    constexpr finite_field<2> operator()(const finite_field<2> & x) const
     {return finite_field<2>(x);}
 };
 
