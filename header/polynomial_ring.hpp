@@ -6,11 +6,21 @@
 template<int k, int p>
 class polynomial_ring
 {
-    static ntt<k, 998244353> ntt_1;
-    static ntt<k, 249561089> ntt_2;
-    static ntt<k, 104857601> ntt_3; 
+    static constexpr convolution<k, p> conv = convolution<k, p>;
     int deg;
     finite_field<p> coeff[1<<k];
+
+    void kernel_legacy_mult(finite_field<p>* a, finite_field<p>* b, finite_field<p>* r, 
+    int deg_a, int deg_b) const;
+    void kernel_legacy_div(finite_field<p>* a, finite_field<p>* b, finite_field<p>* r,
+    int deg_a, int deg_b) const;
+    void kernel_legacy_mod(finite_field<p>* a, finite_field<p> *b, finite_field<p>* r,
+    int deg_a, int deg_b) const;
+
+    void kernel_fft_div(finite_field<p>* a, finite_field<p>* b, finite_field<p>* r,
+    int deg_a, int deg_b) const;
+    void kernel_ftt_mod(finite_field<p>* a, finite_field<p>* b, finite_field<p>* r,
+    int deg_a, int deg_b) const;
 
     public:
     polynomial_ring() {};

@@ -15,31 +15,29 @@ class finite_field
     : value(copy.value) {}
     constexpr int get_val() const {return value;}
     constexpr bool operator<(const finite_field<p> & comp)
-    {
-        return (this->value < 0 ? p+this->value : this->value)<\
-        (comp.value < 0 ? p+comp.value : comp.value);
-    }
+    {return (this->value < comp.value);}
     constexpr bool operator>(const finite_field<p> & comp)
-    {
-        return (this->value < 0 ? p+this->value : this->value)>\
-        (comp.value < 0 ? p+comp.value : comp.value);
-    }
+    {return (this->value > comp.value);}
     constexpr bool operator==(const int & comp)
-    {return (value == comp) || (value == p+comp) || (value == comp-p);}
+    {return (value == comp);}
     constexpr bool operator==(const finite_field<p> & comp)
-    {return (value == comp.value) || (value == p+comp.value) || (value == comp.value-p);}
+    {return (value == comp.value);}
     constexpr bool operator!=(const int & comp)
-    {return (value != comp) && (value != p+comp) && (value != comp-p);}
+    {return (value != comp);}
     constexpr bool operator!=(const finite_field<p> & comp)
-    {return (value != comp.value) && (value != p+comp.value) && (value != comp.value-p);}
+    {return (value != comp.value);}
     constexpr finite_field<p> & operator+=(const finite_field<p> & add)
     {this -> value += add.value; this -> value %= p; return *this;}
     constexpr finite_field<p> & operator-=(const finite_field<p> & sub)
-    {this -> value -= sub.value; this -> value %= p; return *this;}
+    {this -> value += p-sub.value; this -> value %= p; return *this;}
     constexpr finite_field<p> & operator*=(const finite_field<p> & mult)
     {this -> value = (1ll*(this->value)*mult.value) % p; return *this;}
     constexpr finite_field<p> & operator*=(const int & mult)
-    {this -> value = (1ll*(this->value)*mult) % p; return *this;}
+    {
+        this -> value = (1ll*(this->value)*mult) % p; 
+        this -> value = (this -> value < 0 ? this -> value = p + this -> value : this -> value);
+        return *this;
+    }
     constexpr finite_field<p> & operator/=(const finite_field<p> & div);
     constexpr finite_field<p> & operator=(const int & assign)
     {this -> value = assign; return *this;}
@@ -57,7 +55,7 @@ class finite_field
     {return finite_field<p>(*this) /= div;}
     friend std::ostream & operator<<(std::ostream & os, 
     const finite_field<p> & f_p)
-    {os << (f_p.value<0 ? p+f_p.value : f_p.value); return os;}
+    {os << f_p.value; return os;}
     friend std::istream & operator>>(std::istream & is,
     finite_field<p> & f_p)
     {is >> f_p.value; return is;}
@@ -135,7 +133,7 @@ template<int p>
 class tonelli_shanks
 {
     private:
-    static finite_field<p> non_residual = quad_non_res<p>();
+    static constexpr finite_field<p> non_residual = quad_non_res<p>();
     public:
     tonelli_shanks() {}
     constexpr finite_field<p> operator()(finite_field<p> x);

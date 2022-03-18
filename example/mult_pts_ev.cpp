@@ -9,7 +9,7 @@ int main(void)
 {
     int n, q;
     finite_field<p>* result;
-    multipoint_evaluation<k_max, p> m_ev;
+    multipoint_evaluation<k_max, p> m_ev, n_ev;
     std::ios_base::sync_with_stdio(false);
     std::cin.tie(); std::cout.tie();
     m_ev.allocate(space, k_max);

@@ -1,5 +1,5 @@
 template<int k, int p>
-ntt<k, p>::ntt()
+constexpr ntt<k, p>::ntt()
 {
     int idx_2 = 0;
     int tmp = p-1;
@@ -60,8 +60,180 @@ void ntt<k, p>::operator()(finite_field<p>* ary, int k_idx, bool inverse) const
     return;
 }
 
-template<int k, int p1, int p2, int p3>
-arb_ntt<k, p1, p2, p3>::~arb_ntt()
+template<int k, int p>
+constexpr ntt<k, 998244353> convolution<k, p>::ntt_1;
+
+template<int k, int p>
+constexpr ntt<k, 897581057> convolution<k, p>::ntt_2;
+
+template<int k, int p>
+constexpr ntt<k, 880803841> convolution<k, p>::ntt_3;
+
+template<int k, int p>
+void convolution<k, p>::convolution_kernel_1(finite_field<p>* a, finite_field<p>* b, finite_field<p>* r,
+int size_a, int size_b, int k_idx)
+{
+    finite_field<998244353> *ext_a, *ext_b;
+    ext_a = new finite_field<998244353>[1<<k_idx];
+    ext_b = new finite_field<998244353>[1<<k_idx];
+    for(int i=0; i<size_a; i++)
+    ext_a[i] = a[i].get_val() % 998244353;
+    for(int i=0; i<size_b; i++)
+    ext_b[i] = b[i].get_val() % 998244353;
+    for(int i=size_a; i<(1<<k_idx); i++)
+    ext_a[i] = 0;
+    for(int i=size_b; i<(1<<k_idx); i++)
+    ext_b[i] = 0;
+    ntt_1(ext_a, k_idx, false); ntt_1(ext_b, k_idx, false);
+    for(int i=0; i<(1<<k_idx); i++)
+    ext_a[i] *= ext_b[i];
+    ntt_1(ext_a, k_idx, true);
+    for(int i=0; i<size_a+size_b-1; i++)
+    r[i] = ext_a[i].get_val() % p;
+    delete ext_a; delete ext_b;
+    return;
+}
+
+template<int k, int p>
+void convolution<k, p>::convolution_kernel_2(finite_field<p>* a, finite_field<p>* b, finite_field<p>* r,
+int size_a, int size_b, int k_idx)
+{
+    constexpr long long int n = 1ll*998244353*897581057;
+    constexpr long long int f1 = (1ll*897581057*415935157);
+    constexpr long long int f2 = (1ll*998244353*523588941);
+    finite_field<p> *result = new finite_field<p>[size_a+size_b-1];
+    finite_field<998244353> *ext_a1, *ext_b1;
+    finite_field<897581057> *ext_a2, *ext_b2;
+
+    ext_a1 = new finite_field<998244353>[1<<k_idx];
+    ext_b1 = new finite_field<998244353>[1<<k_idx];
+    ext_a2 = new finite_field<897581057>[1<<k_idx];
+    ext_b2 = new finite_field<897581057>[1<<k_idx];
+
+    for(int i=0; i<size_a; i++)
+    {ext_a1[i] = a[i].get_val() % 998244353; ext_a2[i] = a[i].get_val() % 897581057;}
+    for(int i=0; i<size_b; i++)
+    {ext_b1[i] = b[i].get_val() % 998244353; ext_b2[i] = b[i].get_val() % 897581057;}
+    for(int i=size_a; i<(1<<k_idx); i++)
+    {ext_a1[i] = 0; ext_a2[i] = 0;}
+    for(int i=size_b; i<(1<<k_idx); i++)
+    {ext_b1[i] = 0; ext_b2[i] = 0;}
+    ntt_1(ext_a1, k_idx, false); ntt_1(ext_b1, k_idx, false);
+    ntt_2(ext_a2, k_idx, false); ntt_2(ext_b2, k_idx, false);
+    for(int i=0; i<(1<<k_idx); i++)
+    {ext_a1[i] *= ext_b1[i]; ext_a2[i] *= ext_b2[i];}
+    ntt_1(ext_a1, k_idx, true); ntt_2(ext_a2, k_idx, true);
+    for(int i=0; i<size_a+size_b-1; i++)
+    {
+        r[i] = (((__int128_t)f1*ext_a1[i].get_val()+
+        (__int128_t)f2*ext_a2[i].get_val()) % n) % p;
+    }
+    delete ext_a1; delete ext_b1;
+    delete ext_a2; delete ext_b2;
+    return;
+}
+
+template<int k, int p>
+void convolution<k, p>::convolution_kernel_3(finite_field<p>* a, finite_field<p>* b, finite_field<p>* r,
+int size_a, int size_b, int k_idx)
+{
+    constexpr __int128_t n = (__int128_t)998244353*897581057*880803841;
+    constexpr __int128_t f1 = (__int128_t)41593599*897581057*880803841;
+    constexpr __int128_t f2 = (__int128_t)998244353*635786105*880803841;
+    constexpr __int128_t f3 = (__int128_t)998244353*897581057*220201354;
+
+    finite_field<p> *result = new finite_field<p>[size_a+size_b-1];
+    finite_field<998244353> *ext_a1, *ext_b1;
+    finite_field<897581057> *ext_a2, *ext_b2;
+    finite_field<880803841> *ext_a3, *ext_b3;
+
+    ext_a1 = new finite_field<998244353>[1<<k_idx];
+    ext_b1 = new finite_field<998244353>[1<<k_idx];
+    ext_a2 = new finite_field<897581057>[1<<k_idx];
+    ext_b2 = new finite_field<897581057>[1<<k_idx];
+    ext_a3 = new finite_field<880803841>[1<<k_idx];
+    ext_b3 = new finite_field<880803841>[1<<k_idx];
+
+    for(int i=0; i<size_a; i++)
+    {
+        ext_a1[i] = a[i].get_val() % 998244353; 
+        ext_a2[i] = a[i].get_val() % 897581057;
+        ext_a3[i] = a[i].get_val() % 880803841;
+    }
+    for(int i=0; i<size_b; i++)
+    {
+        ext_b1[i] = b[i].get_val() % 998244353; 
+        ext_b2[i] = b[i].get_val() % 897581057;
+        ext_b3[i] = b[i].get_val() % 880803841;
+    }
+
+    for(int i=size_a; i<(1<<k_idx); i++)
+    {ext_a1[i] = 0; ext_a2[i] = 0; ext_a3[i] = 0;}
+    for(int i=size_b; i<(1<<k_idx); i++)
+    {ext_b1[i] = 0; ext_b2[i] = 0; ext_b3[i] = 0;}
+
+    ntt_1(ext_a1, k_idx, false); ntt_1(ext_b1, k_idx, false);
+    ntt_2(ext_a2, k_idx, false); ntt_2(ext_b2, k_idx, false);
+    ntt_3(ext_a3, k_idx, false); ntt_3(ext_b3, k_idx, false);
+
+    for(int i=0; i<(1<<k_idx); i++)
+    {ext_a1[i] *= ext_b1[i]; ext_a2[i] *= ext_b2[i]; ext_a3[i] *= ext_b3[i];}
+    ntt_1(ext_a1, k_idx, true); ntt_2(ext_a2, k_idx, true); ntt_3(ext_a3, k_idx, true);
+    for(int i=0; i<size_a+size_b-1; i++)
+    {
+        r[i] = (((__int128_t)f1*ext_a1[i].get_val()+
+        (__int128_t)f2*ext_a2[i].get_val()+
+        (__int128_t)f3*ext_a3[i].get_val()) % n) % p;
+    }
+    delete ext_a1; delete ext_b1;
+    delete ext_a2; delete ext_b2;
+    delete ext_a3; delete ext_b3;
+    return;
+}
+
+template<int k, int p>
+void convolution<k, p>::operator()(finite_field<p>* a, finite_field<p>* b, finite_field<p>* r,
+int size_a, int size_b, int k_idx)
+{
+    if(1ll*(p-1)*(p-1) < 998244353>>k)
+    return convolution_kernel_1(a, b, r, size_a, size_b, k_idx);
+    if(1ll*(p-1)*(p-1)<(1ll*998244353*897581057)>>k)
+    return convolution_kernel_2(a, b, r, size_a, size_b, k_idx);
+    return convolution_kernel_3(a, b, r, size_a, size_b, k_idx);
+}
+
+template<int k>
+constexpr int arb_ntt<k>::p1;
+
+template<int k>
+constexpr int arb_ntt<k>::p2;
+
+template<int k>
+constexpr int arb_ntt<k>::p3;
+
+template<int k>
+constexpr __int128_t arb_ntt<k>::pqr;
+
+template<int k>
+constexpr __int128_t arb_ntt<k>::factor_p1;
+
+template<int k>
+constexpr __int128_t arb_ntt<k>::factor_p2;
+
+template<int k>
+constexpr __int128_t arb_ntt<k>::factor_p3;
+
+template<int k>
+constexpr ntt<k, 998244353> arb_ntt<k>::ntt_p1;
+
+template<int k>
+constexpr ntt<k, 897581057> arb_ntt<k>::ntt_p2;
+
+template<int k>
+constexpr ntt<k, 880803841> arb_ntt<k>::ntt_p3;
+
+template<int k>
+arb_ntt<k>::~arb_ntt()
 {
     if(allocated_idx>-1)
     {
@@ -70,8 +242,8 @@ arb_ntt<k, p1, p2, p3>::~arb_ntt()
     }
 }
 
-template<int k, int p1, int p2, int p3>
-void arb_ntt<k, p1, p2, p3>::allocate(int k_idx)
+template<int k>
+void arb_ntt<k>::allocate(int k_idx)
 {
     int size = 1<<k_idx;
     if(allocated_idx>=k_idx)
@@ -92,8 +264,8 @@ void arb_ntt<k, p1, p2, p3>::allocate(int k_idx)
     return;
 }
 
-template<int k, int p1, int p2, int p3>
-void arb_ntt<k, p1, p2, p3>::allocate(int* out_space_i,
+template<int k>
+void arb_ntt<k>::allocate(int* out_space_i,
 finite_field<p1>* out_space_p1, finite_field<p2>* out_space_p2,
 finite_field<p3>* out_space_p3, int k_idx)
 {
@@ -105,8 +277,8 @@ finite_field<p3>* out_space_p3, int k_idx)
     return;
 }
 
-template<int k, int p1, int p2, int p3>
-int arb_ntt<k, p1, p2, p3>::pow(long long int base, int idx, int p)
+template<int k>
+int arb_ntt<k>::pow(long long int base, int idx, int p)
 {
     long long int result = 1;
     while(idx > 0)
@@ -118,8 +290,8 @@ int arb_ntt<k, p1, p2, p3>::pow(long long int base, int idx, int p)
     return result;
 }
 
-template<int k, int p1, int p2, int p3>
-int arb_ntt<k, p1, p2, p3>::wisdom(int size, int p)
+template<int k>
+int arb_ntt<k>::wisdom(int size, int p)
 {
     bool is_primitive;
     int tmp, num_fact, factor[20], g;
@@ -154,8 +326,8 @@ int arb_ntt<k, p1, p2, p3>::wisdom(int size, int p)
     return g;
 }
 
-template<int k, int p1, int p2, int p3>
-void arb_ntt<k, p1, p2, p3>::fft(int* a, int* b, int* b_inv, int size, int k_idx, int p)
+template<int k>
+void arb_ntt<k>::fft(int* a, int* b, int* b_inv, int size, int k_idx, int p)
 {
     int fft_size = 1<<k_idx;
     int tmp;
@@ -185,8 +357,8 @@ void arb_ntt<k, p1, p2, p3>::fft(int* a, int* b, int* b_inv, int size, int k_idx
     return;
 }
 
-template<int k, int p1, int p2, int p3>
-void arb_ntt<k, p1, p2, p3>::operator()(int* ary, int size, int p, bool inverse)
+template<int k>
+void arb_ntt<k>::operator()(int* ary, int size, int p, bool inverse)
 {
     int fft_size;
     int k_idx;
@@ -245,7 +417,7 @@ void arb_ntt<k, p1, p2, p3>::operator()(int* ary, int size, int p, bool inverse)
             {
                 tmp1 = ary[i]; tmp2 = (1ll*ary[i+size/2]*factor) % p;
                 ary[i] = (tmp1+tmp2) % p;
-                ary[i+size/2] = (tmp1-tmp2) % p;
+                ary[i+size/2] = (tmp1+p-tmp2) % p;
                 factor = (1ll*factor*w_inv) % p; 
             }
             for(int i=0; i<size; i++)
@@ -259,13 +431,11 @@ void arb_ntt<k, p1, p2, p3>::operator()(int* ary, int size, int p, bool inverse)
             {
                 tmp1 = ary[i]; tmp2 = (1ll*ary[i+size/2]*factor) % p;
                 ary[i] = (tmp1+tmp2) % p;
-                ary[i+size/2] = (tmp1-tmp2) % p;
+                ary[i+size/2] = (tmp1+p-tmp2) % p;
                 factor = (1ll*factor*w) % p; 
             }
         }
     }
-    for(int i=0; i<size; i++)
-    ary[i] = (ary[i]<0 ? p+ary[i] : ary[i]);
     return;
 }
 

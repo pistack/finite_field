@@ -1,4 +1,7 @@
 template<int k, int p>
+constexpr ntt<k+2, p> multipoint_evaluation<k, p>::ntt_p;
+
+template<int k, int p>
 multipoint_evaluation<k, p>::~multipoint_evaluation()
 {
     if(allocated_idx>-1)

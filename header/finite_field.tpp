@@ -55,6 +55,9 @@ constexpr finite_field<p> quad_non_res()
 }
 
 template<int p>
+constexpr finite_field<p> tonelli_shanks<p>::non_residual;
+
+template<int p>
 constexpr finite_field<p> tonelli_shanks<p>::operator()(finite_field<p> x)
 {
     int q = p-1, m = 0, i = 0;
