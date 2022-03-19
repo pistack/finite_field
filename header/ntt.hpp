@@ -16,27 +16,6 @@ class ntt
     int k_idx, bool inverse) const;
 };
 
-template<int k, int p>
-class convolution
-{
-    private:
-    static constexpr ntt<k, 998244353> ntt_1 = ntt<k, 998244353>();
-    static constexpr ntt<k, 897581057> ntt_2 = ntt<k, 897581057>();
-    static constexpr ntt<k, 880803841> ntt_3 = ntt<k, 880803841>();
-
-    void convolution_kernel_1(finite_field<p>* a, finite_field<p>* b, finite_field<p>* r, 
-    int size_a, int size_b, int k_idx);
-    void convolution_kernel_2(finite_field<p>* a, finite_field<p>* b, finite_field<p>* r,
-    int size_a, int size_b, int k_idx);
-    void convolution_kernel_3(finite_field<p>* a, finite_field<p>* b, finite_field<p>* r,
-    int size_a, int size_b, int k_idx);
-
-    public:
-    constexpr convolution() {};
-    void operator()(finite_field<p>* a, finite_field<p>* b, finite_field<p>* r,
-    int size_a, int size_b, int k_idx);
-};
-
 template<int k>
 class arb_ntt
 {

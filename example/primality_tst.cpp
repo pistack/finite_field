@@ -2,7 +2,7 @@
 #include "../header/polynomial_ring.hpp"
 #include <iostream>
 
-const int length = 62;
+const int length = 7;
 
 int poly_str_to_poly(char* poly_str, finite_field<2>* buffer)
 {
