@@ -98,10 +98,8 @@ template<int k, int p>
 void convolution<k, p>::convolution_kernel_2(finite_field<p>* a, finite_field<p>* b, finite_field<p>* r,
 int size_a, int size_b, int k_idx)
 {
-    constexpr long long int n = 1ll*998244353*897581057;
-    constexpr long long int f1 = (1ll*897581057*415935157);
-    constexpr long long int f2 = (1ll*998244353*523588941);
-    finite_field<p> *result = new finite_field<p>[size_a+size_b-1];
+    long long int c1, c2;
+
     finite_field<998244353> *ext_a1, *ext_b1;
     finite_field<897581057> *ext_a2, *ext_b2;
 
@@ -125,8 +123,9 @@ int size_a, int size_b, int k_idx)
     ntt_1(ext_a1, k_idx, true); ntt_2(ext_a2, k_idx, true);
     for(int i=0; i<size_a+size_b-1; i++)
     {
-        r[i] = (((__int128_t)f1*ext_a1[i].get_val()+
-        (__int128_t)f2*ext_a2[i].get_val()) % n) % p;
+        c1 = ext_a1[i].get_val();
+        c2 = (897581057 - (523588941*(c1-ext_a2[i].get_val()) % 897581057)) % 897581057;
+        r[i] = (c1+998244353*c2 % p);
     }
     delete ext_a1; delete ext_b1;
     delete ext_a2; delete ext_b2;
@@ -137,12 +136,8 @@ template<int k, int p>
 void convolution<k, p>::convolution_kernel_3(finite_field<p>* a, finite_field<p>* b, finite_field<p>* r,
 int size_a, int size_b, int k_idx)
 {
-    constexpr __int128_t n = (__int128_t)998244353*897581057*880803841;
-    constexpr __int128_t f1 = (__int128_t)41593599*897581057*880803841;
-    constexpr __int128_t f2 = (__int128_t)998244353*635786105*880803841;
-    constexpr __int128_t f3 = (__int128_t)998244353*897581057*220201354;
+    long long int c1, c2, c3;
 
-    finite_field<p> *result = new finite_field<p>[size_a+size_b-1];
     finite_field<998244353> *ext_a1, *ext_b1;
     finite_field<897581057> *ext_a2, *ext_b2;
     finite_field<880803841> *ext_a3, *ext_b3;
@@ -181,9 +176,10 @@ int size_a, int size_b, int k_idx)
     ntt_1(ext_a1, k_idx, true); ntt_2(ext_a2, k_idx, true); ntt_3(ext_a3, k_idx, true);
     for(int i=0; i<size_a+size_b-1; i++)
     {
-        r[i] = (((__int128_t)f1*ext_a1[i].get_val()+
-        (__int128_t)f2*ext_a2[i].get_val()+
-        (__int128_t)f3*ext_a3[i].get_val()) % n) % p;
+        c1 = ext_a1[i].get_val();
+        c2 = (897581057 - ((523588941*(c1 - ext_a2[i].get_val())) % 897581057)) % 897581057;
+        c3 = (880803841 - ((220201354*((c1+998244353*c2 - ext_a3[i].get_val()) % 880803841)) % 880803841)) % 880803841;
+        r[i] = (c1+998244353*((c2+897581057*c3) % p) % p);
     }
     delete ext_a1; delete ext_b1;
     delete ext_a2; delete ext_b2;
@@ -203,27 +199,6 @@ int size_a, int size_b, int k_idx)
 }
 
 template<int k>
-constexpr int arb_ntt<k>::p1;
-
-template<int k>
-constexpr int arb_ntt<k>::p2;
-
-template<int k>
-constexpr int arb_ntt<k>::p3;
-
-template<int k>
-constexpr __int128_t arb_ntt<k>::pqr;
-
-template<int k>
-constexpr __int128_t arb_ntt<k>::factor_p1;
-
-template<int k>
-constexpr __int128_t arb_ntt<k>::factor_p2;
-
-template<int k>
-constexpr __int128_t arb_ntt<k>::factor_p3;
-
-template<int k>
 constexpr ntt<k, 998244353> arb_ntt<k>::ntt_p1;
 
 template<int k>
@@ -231,51 +206,6 @@ constexpr ntt<k, 897581057> arb_ntt<k>::ntt_p2;
 
 template<int k>
 constexpr ntt<k, 880803841> arb_ntt<k>::ntt_p3;
-
-template<int k>
-arb_ntt<k>::~arb_ntt()
-{
-    if(allocated_idx>-1)
-    {
-        delete space_i; delete space_p1;
-        delete space_p2; delete space_p3;
-    }
-}
-
-template<int k>
-void arb_ntt<k>::allocate(int k_idx)
-{
-    int size = 1<<k_idx;
-    if(allocated_idx>=k_idx)
-    return;
-    if(allocated_idx>-1)
-    {
-        delete space_i; delete space_p1;
-        delete space_p2; delete space_p3;
-    }
-    space_i = new int[size];
-    space_p1 = new finite_field<p1>[2*size];
-    space_p2 = new finite_field<p2>[2*size];
-    space_p3 = new finite_field<p3>[2*size];
-    b = space_i; b_inv = space_i+size/2;
-    a1 = space_p1; b1 = space_p1+size;
-    a2 = space_p2; b2 = space_p2+size;
-    a3 = space_p3; b3 = space_p3+size;
-    return;
-}
-
-template<int k>
-void arb_ntt<k>::allocate(int* out_space_i,
-finite_field<p1>* out_space_p1, finite_field<p2>* out_space_p2,
-finite_field<p3>* out_space_p3, int k_idx)
-{
-    int size = 1<<k_idx;
-    b = out_space_i; b_inv = out_space_i+size/2;
-    a1 = out_space_p1; b1 = out_space_p1+size;
-    a2 = out_space_p2; b2 = out_space_p2+size;
-    a3 = out_space_p3; b3 = out_space_p3+size;
-    return;
-}
 
 template<int k>
 int arb_ntt<k>::pow(long long int base, int idx, int p)
@@ -327,16 +257,18 @@ int arb_ntt<k>::wisdom(int size, int p)
 }
 
 template<int k>
-void arb_ntt<k>::fft(int* a, int* b, int* b_inv, int size, int k_idx, int p)
+void arb_ntt<k>::fft(int* a, finite_field<998244353>* a1, finite_field<897581057>* a2, finite_field<880803841>* a3,
+int* b, finite_field<998244353>* b1, finite_field<897581057>* b2, finite_field<880803841>* b3,
+int* b_inv, int size, int k_idx, int p)
 {
     int fft_size = 1<<k_idx;
     int tmp;
-    __int128_t tmp_128;
+    long long int c1, c2, c3;
     for(int i=0; i<size; i++)
     {
-        b1[i] = b[i] % p1; b2[i] = b[i] % p2; b3[i] = b[i] % p3;
-        tmp = ((1ll)*a[i]*b_inv[i]) % p;
-        a1[i] = tmp % p1; a2[i] = tmp % p2; a3[i] = tmp % p3;
+        b1[i] = b[i] % 998244353; b2[i] = b[i] % 897581057; b3[i] = b[i] % 880803841;
+        tmp = (1ll*a[i]*b_inv[i]) % p;
+        a1[i] = tmp % 998244353; a2[i] = tmp % 897581057; a3[i] = tmp % 880803841;
     }
     for(int i=size; i<fft_size; i++)
     {b1[i] = 0; b2[i] = 0; b3[i] = 0; a1[i] = 0; a2[i] = 0; a3[i] = 0;}
@@ -349,10 +281,10 @@ void arb_ntt<k>::fft(int* a, int* b, int* b_inv, int size, int k_idx, int p)
     ntt_p1(a1, k_idx, true); ntt_p2(a2, k_idx, true); ntt_p3(a3, k_idx, true);
     for(int i=0; i<size; i++)
     {
-        tmp_128 = (((((a1[i].get_val()*factor_p1) % pqr)+
-        a2[i].get_val()*factor_p2) % pqr)+a3[i].get_val()*factor_p3) % pqr;
-        tmp_128 = (tmp_128 < 0 ? pqr+tmp_128 : tmp_128);
-        a[i] = tmp_128 % p; a[i] = (1ll*a[i]*b_inv[i]) % p;  
+        c1 = a1[i].get_val();
+        c2 = (897581057 - ((523588941*(c1 - a2[i].get_val())) % 897581057)) % 897581057;
+        c3 = (880803841 - ((220201354*((c1+998244353*c2 - a3[i].get_val()) % 880803841)) % 880803841)) % 880803841;
+        a[i] = (b_inv[i]*(c1+998244353*((c2+897581057*c3) % p) % p)) % p;
     }
     return;
 }
@@ -364,6 +296,10 @@ void arb_ntt<k>::operator()(int* ary, int size, int p, bool inverse)
     int k_idx;
     int w, w_inv, size_inv, factor;
     int tmp1, tmp2;
+    int *b, *b_inv;
+    finite_field<998244353> *a1, *b1;
+    finite_field<897581057> *a2, *b2;
+    finite_field<880803841> *a3, *b3;
 
     if((p-1)/size % 2 == 0)
     {
@@ -372,6 +308,15 @@ void arb_ntt<k>::operator()(int* ary, int size, int p, bool inverse)
         fft_size = 1; k_idx = 0;
         while(fft_size < 2*size)
         {fft_size <<= 1; k_idx++;}
+
+        b = new int[size]; b_inv = new int[size];
+        a1 = new finite_field<998244353>[fft_size]; 
+        b1 = new finite_field<998244353>[fft_size];
+        a2 = new finite_field<897581057>[fft_size]; 
+        b2 = new finite_field<897581057>[fft_size];
+        a3 = new finite_field<880803841>[fft_size]; 
+        b3 = new finite_field<880803841>[fft_size];
+
         for(int i=0; i<size; i++)
         {
             b[i] = pow(w_inv, (1ll*i*i) % (2*size), p);
@@ -379,13 +324,13 @@ void arb_ntt<k>::operator()(int* ary, int size, int p, bool inverse)
         }
         if(inverse)
         {
-            fft(ary, b_inv, b, size, k_idx, p);
+            fft(ary, a1, a2, a3, b_inv, b1, b2, b3, b, size, k_idx, p);
             size_inv = pow(size, p-2, p);
             for(int i=0; i<size; i++)
             ary[i] = (1ll*ary[i]*size_inv) % p;
         }
         else
-        fft(ary, b, b_inv, size, k_idx, p);
+        fft(ary, a1, a2, a3, b, b1, b2, b3, b_inv, size, k_idx, p);
     }
     else
     {
@@ -394,7 +339,15 @@ void arb_ntt<k>::operator()(int* ary, int size, int p, bool inverse)
         fft_size = 1; k_idx = 0;
         while(fft_size < size)
         {fft_size <<= 1; k_idx++;}
-    
+
+        b = new int[size/2]; b_inv = new int[size/2];
+        a1 = new finite_field<998244353>[fft_size]; 
+        b1 = new finite_field<998244353>[fft_size];
+        a2 = new finite_field<897581057>[fft_size]; 
+        b2 = new finite_field<897581057>[fft_size];
+        a3 = new finite_field<880803841>[fft_size]; 
+        b3 = new finite_field<880803841>[fft_size];
+
         for(int i=0; i<size/2; i++)
         b[i] = ary[2*i+1];
         for(int i=0; i<size/2; i++)
@@ -411,13 +364,13 @@ void arb_ntt<k>::operator()(int* ary, int size, int p, bool inverse)
         if(inverse)
         {
             size_inv = pow(size, p-2, p);
-            fft(ary, b_inv, b, size/2, k_idx, p);
-            fft(ary+size/2, b_inv, b, size/2, k_idx, p);
+            fft(ary, a1, a2, a3, b_inv, b1, b2, b3, b, size/2, k_idx, p);
+            fft(ary+size/2, a1, a2, a3, b_inv, b1, b2, b3, b, size/2, k_idx, p);
             for(int i=0; i<size/2; i++)
             {
                 tmp1 = ary[i]; tmp2 = (1ll*ary[i+size/2]*factor) % p;
                 ary[i] = (tmp1+tmp2) % p;
-                ary[i+size/2] = (tmp1+p-tmp2) % p;
+                ary[i+size/2] = (tmp1+(p-tmp2)) % p;
                 factor = (1ll*factor*w_inv) % p; 
             }
             for(int i=0; i<size; i++)
@@ -425,17 +378,20 @@ void arb_ntt<k>::operator()(int* ary, int size, int p, bool inverse)
         }
         else
         {
-            fft(ary, b, b_inv, size/2, k_idx, p);
-            fft(ary+size/2, b, b_inv, size/2, k_idx, p);
+            fft(ary, a1, a2, a3, b, b1, b2, b3, b_inv, size/2, k_idx, p);
+            fft(ary+size/2, a1, a2, a3, b, b1, b2, b3, b_inv, size/2, k_idx, p);
             for(int i=0; i<size/2; i++)
             {
                 tmp1 = ary[i]; tmp2 = (1ll*ary[i+size/2]*factor) % p;
                 ary[i] = (tmp1+tmp2) % p;
-                ary[i+size/2] = (tmp1+p-tmp2) % p;
+                ary[i+size/2] = (tmp1+(p-tmp2)) % p;
                 factor = (1ll*factor*w) % p; 
             }
         }
     }
+    delete b; delete b_inv;
+    delete a1; delete a2; delete a3;
+    delete b1; delete b2; delete b3;
     return;
 }
 

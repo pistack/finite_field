@@ -1,35 +1,9 @@
 template<typename field>
-berlekamp_massey<field>::~berlekamp_massey()
-{
-    if(allocated_size>0)
-    delete space;
-}
-
-template<typename field>
-void berlekamp_massey<field>::allocate(int size)
-{
-    if(allocated_size>=size)
-    return;
-    if(allocated_size>0)
-    delete space;
-    space = new field[size];
-    c = space; t1 = space+size/3; t2 = space+2*(size/3);
-    return;
-}
-
-template<typename field>
-void berlekamp_massey<field>::allocate(field* out_space, int size)
-{
-    c = out_space; 
-    t1 = out_space+size/3; 
-    t2 = out_space+2*(size/3);
-}
-
-template<typename field>
-field* berlekamp_massey<field>::operator()(field* s, int* deg, int size)
+field* berlekamp_massey(field* s, int* deg, int size)
 {
     field b(1), d, b_inv;
-    field *r;
+    field *r, *c, *t1, *t2;
+    c = new field[size]; t1 = new field[size]; t2 = new field[size];
     t1[0] = 1; c[0] = 1;
     int L = 0, deg_t1 = 0, m = 1;
     for(int n = 0; n<size; n++)
@@ -65,5 +39,6 @@ field* berlekamp_massey<field>::operator()(field* s, int* deg, int size)
     r = new field[L+1];
     for(int i=0; i<=L; i++)
     r[i] = c[i];
+    delete c; delete t1; delete t2;
     return r;
 }

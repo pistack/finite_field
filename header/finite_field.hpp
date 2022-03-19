@@ -45,6 +45,8 @@ class finite_field
     {if(this != &assign){value = assign.value;} return *this;}
     constexpr finite_field<p> operator+(const finite_field<p> & add) const
     {return finite_field<p>(*this) += add;}
+    constexpr finite_field<p> & operator-() const
+    {return finite_field<p>(p-this->value);}
     constexpr finite_field<p> operator-(const finite_field<p> & sub) const
     {return finite_field<p>(*this) -= sub;}
     constexpr finite_field<p> operator*(const int & mult) const
@@ -101,6 +103,8 @@ class finite_field<2>
     {if(this != &assign){value = assign.value;} return *this;}
     constexpr finite_field<2> operator+(const finite_field<2> & add) const
     {return finite_field<2>(*this) += add;}
+    constexpr finite_field<2> operator-() const
+    {return finite_field<2>(*this);}
     constexpr finite_field<2> operator-(const finite_field<2> & sub) const
     {return finite_field<2>(*this) -= sub;}
     constexpr finite_field<2> operator*(const int & mult) const

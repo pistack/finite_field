@@ -30,13 +30,10 @@ finite_field<2> guess[max_guess];
 int main(void)
 {
     int* deg = new int;
-    berlekamp_massey<finite_field<2>> bm;
     kitamasa<finite_field<2>> kt;
     finite_field<2>* char_poly;
     gen(guess, max_guess);
-    bm.allocate(900);
-    kt.allocate(1200);
-    char_poly = bm(guess, deg, max_guess);
+    char_poly = berlekamp_massey(guess, deg, max_guess);
     std::cout << *deg << '\n';
     for(int i=0; i<=(*deg); i++)
     std::cout << char_poly[i] << ' ';

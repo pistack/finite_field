@@ -1,34 +1,5 @@
 template<typename ring>
-kitamasa<ring>::~kitamasa()
-{
-    if(allocated_space>0)
-    delete space;
-}
-
-template<typename ring>
-void kitamasa<ring>::allocate(int size)
-{
-    if(allocated_space>=size)
-    return;
-    if(allocated_space>0)
-    delete space;
-    allocated_space = size;
-    space = new ring[allocated_space];
-    a = space; b = space+(size/4);
-    r = space+2*(size/4);
-    return;
-}
-
-template<typename ring>
-void kitamasa<ring>::allocate(ring* out_space, int size)
-{
-    a = out_space; b = out_space+(size/4);
-    r = out_space+2*(size/4);
-    return;
-}
-
-template<typename ring>
-int kitamasa<ring>::mult(ring* x, ring* y, ring* mod,
+int kitamasa<ring>::mult(ring* x, ring* y, ring* r, ring* mod,
 int deg_x, int deg_y, int deg_mod)
 {
     ring tmp;
@@ -59,15 +30,15 @@ ring kitamasa<ring>::operator()(unsigned long long int n,
 ring* init_term, ring* char_poly, int deg)
 {
     int deg_a = 0, deg_b = 1;
-    ring result(0);
-
+    ring result(0), *a, *b, *r;
+    a = new ring[deg]; b = new ring[deg]; r = new ring[2*deg];
     a[0] = 1;
     b[0] = 0; b[1] = 1;
     while(n>0)
     {
         if(n % 2 == 1)
-        deg_a = mult(a, b, char_poly, deg_a, deg_b, deg);
-        deg_b = mult(b, b, char_poly, deg_b, deg_b, deg);
+        deg_a = mult(a, b, r, char_poly, deg_a, deg_b, deg);
+        deg_b = mult(b, b, r, char_poly, deg_b, deg_b, deg);
         n >>= 1;
     }
     for(int i=0; i<=deg_a; i++)

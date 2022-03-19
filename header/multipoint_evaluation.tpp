@@ -51,7 +51,7 @@ int multipoint_evaluation<k, p>::construct(finite_field<p>* x, int size)
     {k_idx++; tot_size <<= 1;}
     fft_tot_size = tot_size << 2;
     for(int i=0; i<size; i++)
-    poly_tree[i] = finite_field<p>(-1)*x[i];
+    poly_tree[i] = -x[i];
     for(int i=size; i<tot_size; i++)
     poly_tree[i] = 0;
     curr_size = 1; pos1 = 0;
