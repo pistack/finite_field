@@ -43,5 +43,6 @@ ring* init_term, ring* char_poly, int deg)
     }
     for(int i=0; i<=deg_a; i++)
     result += init_term[i]*a[i];
+    delete a; delete b; delete r;
     return result;
 }
